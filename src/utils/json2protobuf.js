@@ -64,7 +64,6 @@ const getProtobuf = (ob, index, option ) => {
       fieldName = `${ob.isPointer() ? "optional" : ''} ${TYPEMap[ob.type]}`
       if (option?.isShowExample) {
         var example = ob.type === TYPE.String ? `\\"${ob.value}\\"` : ob.value
-        console.log(example, ob)
         swaggerExample = ` [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {example: "${example}"}]`
       }
 
