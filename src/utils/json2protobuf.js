@@ -12,23 +12,23 @@ TYPEMap[TYPE.Int] = "int64"
 TYPEMap[TYPE.Float] = "double"
 TYPEMap[TYPE.Slice] = "repeated"
 
-export const json2protobuf = (object, isShowExample) => {
-  return getProtobuf(getTarget("", object, -1), 1, isShowExample)
+export const json2protobuf = (object, option) => {
+  return getProtobuf(getTarget("", object, -1), 1, option)
 }
 
-const genMessage = (ob = {}, messageName, isShowExample) => {
+const genMessage = (ob = {}, messageName, option) => {
   if (ob.type !== TYPE.Struct) {
     return ""
   }
   const result = []
   result.push(`message ${messageName}{`)
   Object.keys(ob.kv).forEach((key, idx) => {
-    result.push(getProtobuf(ob.kv[key], idx + 1, isShowExample))
+    result.push(getProtobuf(ob.kv[key], idx + 1, option))
   })
   result.push(`${ob.getPrefix()}}`)
   return result.join('\n')
 }
-const getProtobuf = (ob, index, isShowExample = false) => {
+const getProtobuf = (ob, index, option ) => {
   const beforeComment = ob.getBeforeComment()
   const afterComment = ob.getAfterComment()
 
@@ -44,14 +44,14 @@ const getProtobuf = (ob, index, isShowExample = false) => {
       var item = ob.item ? ob.item : new struct("", {}, ob.level + 1)
       if (item.isStruct()) {
         const messageName = getMessageName(ob.key)
-        result.push(ob.getPrefix() + genMessage(item, messageName, isShowExample))
+        result.push(ob.getPrefix() + genMessage(item, messageName, option))
         fieldName = `repeated ${messageName}`
       } else {
         fieldName = `repeated ${TYPEMap[item.type]}`
       }
       break
     case TYPE.Struct:
-      result.push(ob.getPrefix() + genMessage(ob, getMessageName(ob.key), isShowExample))
+      result.push(ob.getPrefix() + genMessage(ob, getMessageName(ob.key), option))
       fieldName = `${TYPEMap[ob.type]}`
       break
     case TYPE.Object:
@@ -62,7 +62,7 @@ const getProtobuf = (ob, index, isShowExample = false) => {
     default:
 
       fieldName = `${ob.isPointer() ? "optional" : ''} ${TYPEMap[ob.type]}`
-      if (isShowExample) {
+      if (option?.isShowExample) {
         var example = ob.type === TYPE.String ? `\\"${ob.value}\\"` : ob.value
         console.log(example, ob)
         swaggerExample = ` [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {example: "${example}"}]`

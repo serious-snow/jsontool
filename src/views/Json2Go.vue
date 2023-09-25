@@ -37,6 +37,7 @@ import {parse,} from 'comment-json';
 import {json2go} from "@/utils/json2go";
 import copy from 'copy-text-to-clipboard';
 import {message} from 'ant-design-vue';
+
 const [messageApi, contextHolder] = message.useMessage();
 
 
@@ -59,7 +60,7 @@ const exchange = () => {
   }
   try {
     const object = parse(inputText.value)
-    resultText.value = json2go(object, omitempty.value)
+    resultText.value = json2go(object, {omitempty: omitempty.value})
   } catch (e) {
     resultText.value = e.toString()
   }

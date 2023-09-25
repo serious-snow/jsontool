@@ -37,6 +37,7 @@ import {parse,} from 'comment-json';
 import copy from 'copy-text-to-clipboard';
 import {message} from 'ant-design-vue';
 import {json2protobuf} from "@/utils/json2protobuf";
+
 const [messageApi, contextHolder] = message.useMessage();
 
 
@@ -59,7 +60,7 @@ const exchange = () => {
   }
   try {
     const object = parse(inputText.value)
-    resultText.value = json2protobuf(object, isSwaggerExample.value)
+    resultText.value = json2protobuf(object, {isShowExample: isSwaggerExample.value})
   } catch (e) {
     resultText.value = e.toString()
   }
