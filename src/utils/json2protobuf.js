@@ -1,5 +1,6 @@
 import {getTarget, struct, TYPE} from "@/utils/base/object";
 import {toCamel, toSnake} from "@/utils/util";
+import {singularize} from "inflection";
 
 
 const TYPEMap = {}
@@ -40,19 +41,27 @@ const getProtobuf = (ob, index, option) => {
   let fieldName
   let swaggerExample = ""
   switch (ob.type) {
-    case TYPE.Slice:
-      var item = ob.item ? ob.item : new struct("", {}, ob.level + 1)
+    case TYPE.Slice: {
+      const item = ob.item ? ob.item : new struct("", {}, ob.level + 1)
       if (item.isStruct()) {
-        const messageName = getMessageName(ob.key)
+        const msgKey = option.singular && ob.key ? singularize(ob.key) : ob.key
+        const messageName = getMessageName(msgKey)
         result.push(ob.getPrefix() + genMessage(item, messageName, option))
         fieldName = `repeated ${messageName}`
       } else {
         fieldName = `repeated ${TYPEMap[item.type]}`
       }
+    }
+
       break
     case TYPE.Struct:
-      result.push(ob.getPrefix() + genMessage(ob, getMessageName(ob.key), option))
-      fieldName = `${TYPEMap[ob.type]}`
+      // no-lint
+    {
+      const messageName = getMessageName(ob.key)
+      result.push(ob.getPrefix() + genMessage(ob, messageName, option))
+      fieldName = `${messageName}`
+    }
+
       break
     case TYPE.Object:
     case TYPE.String:
@@ -63,7 +72,7 @@ const getProtobuf = (ob, index, option) => {
 
       fieldName = `${ob.isPointer() ? "optional" : ''} ${TYPEMap[ob.type]}`
       if (option?.isShowExample) {
-        var example = ob.type === TYPE.String ? `\\"${ob.value}\\"` : ob.value
+        const example = ob.type === TYPE.String ? `\\"${ob.value}\\"` : ob.value
         swaggerExample = ` [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {example: "${example}"}]`
       }
 

@@ -2,6 +2,7 @@
   <context-holder/>
   <div style="display:flex;flex:1;flex-direction: column;padding: 10px">
     <div style="height: 40px;display: flex;flex-direction: row;align-items: center;justify-content: right">
+      <a-checkbox v-model:checked="singular" style="margin-left: 5px">数组使用单数名词</a-checkbox>
       <a-checkbox v-model:checked="withComment" style="margin-left: 5px">显示注释</a-checkbox>
       <a-checkbox v-model:checked="isSwaggerExample" style="margin-left: 5px">swaggerExample</a-checkbox>
       <a-button type="primary" :disabled="!resultText" @click="onClickCopy">复制到剪贴板</a-button>
@@ -44,13 +45,14 @@ const [messageApi, contextHolder] = message.useMessage();
 
 const isSwaggerExample = ref(false)
 const withComment = ref(true)
+const singular = ref(false)
 const inputText = ref("")
 const resultText = ref("")
 const onChange = () => {
   exchange()
 }
 
-watch([isSwaggerExample, withComment], () => {
+watch([isSwaggerExample, withComment, singular], () => {
   exchange()
 })
 
@@ -64,7 +66,8 @@ const exchange = () => {
     const object = parse(inputText.value)
     resultText.value = json2protobuf(object, {
       isShowExample: isSwaggerExample.value,
-      withComment: withComment.value
+      withComment: withComment.value,
+      singular: singular.value
     })
   } catch (e) {
     resultText.value = e.toString()
