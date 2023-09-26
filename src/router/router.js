@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import Json2Go from "../views/Json2Go.vue"
-import Json2Protobuf from "../views/Json2Protobuf.vue"
+import Json2Go from "@/views/Json2Go.vue"
+import Json2Protobuf from "@/views/Json2Protobuf.vue"
+import Swagger2MD from "@/views/Swagger2MD.vue";
 
 const routes = [
   {
@@ -17,11 +18,20 @@ const routes = [
     }
   },
   {
-    path: '/json2protobuf',
-    name: 'json2protobuf',
+    path: '/json2pb',
+    name: 'json2pb',
     component: Json2Protobuf,
     meta: {
       title: "json转protobuf",
+      keepAlive: true,
+    }
+  },
+  {
+    path: '/swagger2md',
+    name: 'swagger2md',
+    component: Swagger2MD,
+    meta: {
+      title: "swagger转md",
       keepAlive: true,
     }
   },
