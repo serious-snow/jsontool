@@ -20,5 +20,6 @@ yarn build
 yarn lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Online preview
+
+See [jsontool](https://jsontool.wangjian.tk/)
