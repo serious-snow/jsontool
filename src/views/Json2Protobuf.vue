@@ -73,10 +73,10 @@ const exchange = () => {
 
 const onClickCopy = () => {
   if (copy(resultText.value)) {
-    messageApi.info('Success!');
+    messageApi.info('复制成功！');
     return
   }
-  messageApi.warning('Fail!');
+  messageApi.warning('复制失败！');
 }
 
 
