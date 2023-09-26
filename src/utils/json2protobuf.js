@@ -37,7 +37,7 @@ const getProtobuf = (ob, index, option) => {
   const result = []
   beforeComment && result.push(`${prefix}${beforeComment}`)
 
-  let fieldName = ""
+  let fieldName
   let swaggerExample = ""
   switch (ob.type) {
     case TYPE.Slice:
