@@ -38,15 +38,14 @@ const getFieldName = (ob = {}, option = {}) => {
   }
 }
 const getJson = (ob, option) => {
-  const beforeComment = ob.getBeforeComment()
-  const afterComment = ob.getAfterComment()
+  const beforeComment = option.withComment ? ob.getBeforeComment() : ''
+  const afterComment = option.withComment ? ob.getAfterComment() : ''
 
   const prefix = ob.getPrefix(ob.level)
 
   const jsonTag = getJsonTag(ob, option)
   const fieldName = getFieldName(ob, option)
   const result = []
-
   beforeComment && result.push(`${prefix}${beforeComment}`)
   result.push(`${prefix}${toCamel(ob.key)} ${fieldName} ${jsonTag} ${afterComment}`)
 

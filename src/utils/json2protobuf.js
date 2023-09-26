@@ -28,9 +28,9 @@ const genMessage = (ob = {}, messageName, option) => {
   result.push(`${ob.getPrefix()}}`)
   return result.join('\n')
 }
-const getProtobuf = (ob, index, option ) => {
-  const beforeComment = ob.getBeforeComment()
-  const afterComment = ob.getAfterComment()
+const getProtobuf = (ob, index, option) => {
+  const beforeComment = option.withComment ? ob.getBeforeComment() : ''
+  const afterComment = option.withComment ? ob.getAfterComment() : ''
 
 
   const prefix = ob.getPrefix(ob.level)

@@ -32,6 +32,10 @@ export const toSnake = (str) => {
       result.push(str[i])
     }
   }
+  //320->three20
+  if (str[0] && str[0] >= '0' && str[0] <= '9') {
+    return EnglishNumbers[str[0] - '0'].toLowerCase() + str.substring(1)
+  }
   return result.join('')
 }
 
