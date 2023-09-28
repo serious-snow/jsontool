@@ -15,6 +15,7 @@ const routes = [
     meta: {
       title: "json转go",
       keepAlive: true,
+      describe: "(支持带注释的json)"
     }
   },
   {
@@ -24,6 +25,7 @@ const routes = [
     meta: {
       title: "json转protobuf",
       keepAlive: true,
+      describe: "(支持带注释的json)"
     }
   },
   {
@@ -33,6 +35,7 @@ const routes = [
     meta: {
       title: "swagger转md",
       keepAlive: true,
+      describe: ""
     }
   },
 ]

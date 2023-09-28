@@ -43,7 +43,7 @@
         <!--        <a-layout-header style="background: #fff; padding: 0" />-->
         <a-layout-content style="margin: 0 16px">
           <a-breadcrumb style="margin: 16px 0">
-            <a-breadcrumb-item>{{ route.meta.title }}</a-breadcrumb-item>
+            <a-breadcrumb-item>{{ `${route.meta.title} ${route.meta.describe}`}}</a-breadcrumb-item>
           </a-breadcrumb>
           <div
               :style="{ display:'flex', background: '#fff',maxHeight:'calc(100% - 24px)', minHeight: 'calc(100% - 48px)' }">
