@@ -34,7 +34,7 @@ const getFieldName = (ob = {}, option = {}) => {
     case TYPE.Int:
     case TYPE.Float:
     default:
-      return `${option?.autoPointer && ob.isPointer() ? "*" : ''}${TYPEMap[ob.type]}`
+      return `${ob.isPointer() ? "*" : ''}${TYPEMap[ob.type]}`
   }
 }
 const getJson = (ob, option) => {
@@ -58,8 +58,7 @@ const getJsonTag = (ob, {omitempty} = {}) => {
     return ""
   }
 
-  if (typeof omitempty === 'undefined') {
-    omitempty = ob.omitempty
-  }
+  omitempty = omitempty || ob.omitempty
+
   return `\`json:"${ob.key}${omitempty ? ',omitempty' : ''}"\``
 }

@@ -2,11 +2,21 @@ import {createRouter, createWebHistory} from 'vue-router'
 import Json2Go from "@/views/Json2Go.vue"
 import Json2Protobuf from "@/views/Json2Protobuf.vue"
 import Swagger2MD from "@/views/Swagger2MD.vue";
+import JsonRemoveComment from "@/views/JsonRemoveComment.vue";
 
 const routes = [
   {
     path: "/",
     redirect: "/json2go"
+  },
+  {
+    path: '/jsonremovecomment',
+    name: 'jsonremovecomment',
+    component: JsonRemoveComment,
+    meta: {
+      title: "json移除注释",
+      keepAlive: true,
+    }
   },
   {
     path: '/json2go',

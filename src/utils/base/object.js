@@ -76,20 +76,9 @@ export class object {
   }
 
   combine(target) {
-
-    if (this.isNull() || target.isNull()) {
-      this._null = true
-    }
-    if (this.omitempty || target.omitempty) {
-      this.omitempty = true
-    }
-    //基类可以被重写
-    if (this.baseClass) {
-      target._null = this._null
-      target.omitempty = this.omitempty
-      return target
-    }
-    return this
+    this._null = target._null = this.isNull() || target.isNull()
+    this.omitempty = target.omitempty = this.omitempty || target.omitempty
+    return target
   }
 
   toObject() {
@@ -101,7 +90,7 @@ export class object {
   }
 
   isPointer() {
-    return this._null && !this.isObject() && !this.isSlice()
+    return this.isNull() && !this.isObject() && !this.isSlice()
   }
 
   typeEqual(targetType) {
@@ -144,9 +133,11 @@ export class object {
 export class string extends object {
   type = TYPE.String
   baseClass = false
+  mayInt64 = false
 
   constructor() {
     super(...arguments);
+    this.mayInt64 = /^-?\d{1,19}$/.test(this.value)
   }
 
   is(target) {
@@ -158,8 +149,10 @@ export class string extends object {
     if (!this.is(target)) {
       return this.toObject()
     }
+    this.mayInt64 = target.mayInt64 = this.mayInt64 && target.mayInt64
     return this
   }
+
 }
 
 export class float extends object {
@@ -284,11 +277,10 @@ export class struct extends object {
   kv = {}
   baseClass = false
 
-  constructor(key1, value={}) {
+  constructor(key1, value = {}) {
     super(...arguments);
     Object.keys(value).forEach(key => {
       const target = getTarget(key, value[key], this.level, getComment(key, value))
-
       if (this.kv[key]) {
         this.kv[key] = this.kv[key].combine(target)
       } else {
@@ -307,7 +299,7 @@ export class struct extends object {
     if (this.is(target)) {
       Object.keys(target.kv).forEach(key => {
         const v = target.kv[key]
-        if (this.kv[key]) {
+        if (Object.prototype.hasOwnProperty.call(this.kv,key)) {
           this.kv[key] = this.kv[key].combine(v)
         } else {
           this.kv[key] = v
@@ -315,7 +307,7 @@ export class struct extends object {
         }
       })
       Object.keys(this.kv).forEach(key => {
-        if (!target.kv[key]) {
+        if (!Object.prototype.hasOwnProperty.call(target.kv,key)) {
           this.kv[key].omitempty = true
         }
       })
@@ -354,6 +346,8 @@ export const getTarget = (key, value, level, comment) => {
       return new string(key, value, level + 1, comment)
     case "Array":
       return new slice(key, value, level + 1, comment)
+    case "Null":
+      return new object(key, value, level + 1, comment, true)
     case "Object":
     /* falls through */
     case "object":
@@ -361,7 +355,7 @@ export const getTarget = (key, value, level, comment) => {
         return new slice(key, value, level + 1, comment)
       }
       if (value === null) {
-        return new object(key, value, level + 1, comment)
+        return new object(key, value, level + 1, comment, true)
       }
       return new struct(key, value, level + 1, comment)
   }
