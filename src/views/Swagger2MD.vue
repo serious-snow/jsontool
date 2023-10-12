@@ -83,7 +83,7 @@ const exchange = () => {
     const object = parse(inputText.value)
     resultText.value = swagger2md(object)
   } catch (e) {
-    resultText.value = e.toString()
+    resultText.value = e.stack.toString()
   }
 }
 

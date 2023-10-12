@@ -68,7 +68,7 @@ const exchange = () => {
       withComment: withComment.value
     })
   } catch (e) {
-    resultText.value = e.toString()
+    resultText.value = e.stack.toString()
   }
 }
 

@@ -79,7 +79,7 @@ const exchange = () => {
       string2int64: string2int64.value,
     })
   } catch (e) {
-    resultText.value = e.toString()
+    resultText.value = e.stack.toString()
   }
 }
 
