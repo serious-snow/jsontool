@@ -32,4 +32,4 @@ yarn lint
 
 ### Online preview
 
-See [jsontool](https://jsontool.wangjian.tk/)
+See [jsontool](https://jsontool.wjhe.top/)
