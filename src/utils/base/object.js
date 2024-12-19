@@ -243,6 +243,30 @@ export class slice extends object {
       }
     }
   }
+
+  combine(target) {
+    super.combine(target)
+
+    if (target.baseClass) {
+      return this
+    }
+
+    // 数组和其他类型 ，直接变为 any
+    if (!this.is(target)) {
+      return target.toObject()
+    }
+
+    if (!this.item){
+      return target
+    }
+
+    if (!target.item){
+      return this
+    }
+    target.item = target.item.combine(this.item)
+    return target
+
+  }
 }
 
 export class bool extends object {
