@@ -1,5 +1,5 @@
 const EnglishNumbers = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"]
-export const toCamel = (str) => {
+export const toCamel = (str,idx = 0) => {
   if (typeof str != "string") {
     return String(str)
   }
@@ -8,7 +8,7 @@ export const toCamel = (str) => {
   }
 
   if (str.includes('_')) {
-    return str.split('_').map(item => toCamel(item)).join('')
+    return str.split('_').map((item,idx) => toCamel(item, idx)).join('')
   }
 
   if (str[0] >= 'a' && str[0] <= 'z') {
@@ -16,7 +16,7 @@ export const toCamel = (str) => {
   }
 
   //320->Three20
-  if (str[0] >= '0' && str[0] <= '9') {
+  if (idx === 0 && str[0] >= '0' && str[0] <= '9') {
     return EnglishNumbers[str[0] - '0'] + str.substring(1)
   }
   return str
