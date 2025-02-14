@@ -1,7 +1,14 @@
 <template>
   <a-layout has-sider>
     <a-layout-sider
-        :style="{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0 }"
+      :style="{
+        overflow: 'auto',
+        height: '100vh',
+        position: 'fixed',
+        left: 0,
+        top: 0,
+        bottom: 0,
+      }"
     >
       <div class="logo" />
       <a-menu v-model:selectedKeys="selectedKeys" theme="light" mode="inline">
@@ -42,8 +49,17 @@
   </a-layout>
 </template>
 <script>
-import { UserOutlined, VideoCameraOutlined, UploadOutlined, BarChartOutlined, CloudOutlined, AppstoreOutlined, TeamOutlined, ShopOutlined } from '@ant-design/icons-vue';
-import { defineComponent, ref } from 'vue';
+import {
+  UserOutlined,
+  VideoCameraOutlined,
+  UploadOutlined,
+  BarChartOutlined,
+  CloudOutlined,
+  AppstoreOutlined,
+  TeamOutlined,
+  ShopOutlined,
+} from "@ant-design/icons-vue";
+import { defineComponent, ref } from "vue";
 export default defineComponent({
   components: {
     UserOutlined,
@@ -58,10 +74,9 @@ export default defineComponent({
 
   setup() {
     return {
-      selectedKeys: ref(['4']),
+      selectedKeys: ref(["4"]),
     };
   },
-
 });
 </script>
 <style>
@@ -74,7 +89,7 @@ export default defineComponent({
   background: #fff;
 }
 
-[data-theme='dark'] .site-layout .site-layout-background {
+[data-theme="dark"] .site-layout .site-layout-background {
   background: #141414;
 }
 </style>

@@ -2,9 +2,9 @@
 
 ## Tool list
 
-* json --> go struct (comment supported)
-* json --> protobuf (comment supported)
-* swagger --> markdown
+- json --> go struct (comment supported)
+- json --> protobuf (comment supported)
+- swagger --> markdown
 
 ## Project setup
 

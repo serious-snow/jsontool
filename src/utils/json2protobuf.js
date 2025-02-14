@@ -1,97 +1,107 @@
-import {getTarget, struct, TYPE} from "@/utils/base/object";
-import {toCamel, toSnake} from "@/utils/util";
-import {singularize} from "inflection";
+import { getTarget, struct, TYPE } from "@/utils/base/object";
+import { getComment, toCamel, toSnake } from "@/utils/util";
+import { singularize } from "inflection";
 
+const TYPEMap = {};
 
-const TYPEMap = {}
-
-TYPEMap[TYPE.Struct] = "message"
-TYPEMap[TYPE.Object] = "message{}"
-TYPEMap[TYPE.String] = "string"
-TYPEMap[TYPE.Bool] = "bool"
-TYPEMap[TYPE.Int] = "int64"
-TYPEMap[TYPE.Float] = "double"
-TYPEMap[TYPE.Slice] = "repeated"
+TYPEMap[TYPE.Struct] = "message";
+TYPEMap[TYPE.Object] = "message{}";
+TYPEMap[TYPE.String] = "string";
+TYPEMap[TYPE.Bool] = "bool";
+TYPEMap[TYPE.Int] = "int64";
+TYPEMap[TYPE.Float] = "double";
+TYPEMap[TYPE.Slice] = "repeated";
 
 export const json2protobuf = (object, option) => {
-  return getProtobuf(getTarget("", object, -1), 1, option)
-}
+  return getProtobuf(
+    getTarget("", object, -1, getComment("", object)),
+    1,
+    option
+  );
+};
 
 const genMessage = (ob = {}, messageName, option) => {
   if (ob.type !== TYPE.Struct) {
-    return ""
+    return "";
   }
-  const result = []
-  result.push(`message ${messageName}{`)
+  const result = [];
+  result.push(`message ${messageName}{`);
   Object.keys(ob.kv).forEach((key, idx) => {
-    result.push(getProtobuf(ob.kv[key], idx + 1, option))
-  })
-  result.push(`${ob.getPrefix()}}`)
-  return result.join('\n')
-}
+    result.push(getProtobuf(ob.kv[key], idx + 1, option));
+  });
+  result.push(`${ob.getPrefix()}}`);
+  return result.join("\n");
+};
 const getProtobuf = (ob, index, option) => {
-  const beforeComment = option.withComment ? ob.getBeforeComment() : ''
-  const afterComment = option.withComment ? ob.getAfterComment() : ''
+  const beforeComment = option.withComment ? ob.getBeforeComment() : "";
+  const afterComment = option.withComment ? ob.getAfterComment() : "";
 
+  const prefix = ob.getPrefix(ob.level);
+  const result = [];
+  beforeComment && result.push(`${prefix}${beforeComment}`);
 
-  const prefix = ob.getPrefix(ob.level)
-  const result = []
-  beforeComment && result.push(`${prefix}${beforeComment}`)
-
-  let fieldName
-  let swaggerExample = ""
+  let fieldName;
+  let swaggerExample = "";
   switch (ob.type) {
-    case TYPE.Slice: {
-      const item = ob.item ? ob.item : new struct("", {}, ob.level + 1)
-      if (item.isStruct()) {
-        const msgKey = option.singular && ob.key ? singularize(ob.key) : ob.key
-        const messageName = getMessageName(msgKey)
-        result.push(ob.getPrefix() + genMessage(item, messageName, option))
-        fieldName = `repeated ${messageName}`
-      } else {
-        fieldName = `repeated ${getTargetTypeName(item, option)}`
+    case TYPE.Slice:
+      {
+        const item = ob.item ? ob.item : new struct("", {}, ob.level + 1);
+        if (item.isStruct()) {
+          const msgKey =
+            option.singular && ob.key ? singularize(ob.key) : ob.key;
+          const messageName = getMessageName(msgKey);
+          result.push(ob.getPrefix() + genMessage(item, messageName, option));
+          fieldName = `repeated ${messageName}`;
+        } else {
+          fieldName = `repeated ${getTargetTypeName(item, option)}`;
+        }
       }
-    }
 
-      break
+      break;
     case TYPE.Struct:
       // no-lint
-    {
-      const messageName = getMessageName(ob.key)
-      result.push(ob.getPrefix() + genMessage(ob, messageName, option))
-      fieldName = `${messageName}`
-    }
+      {
+        const messageName = getMessageName(ob.key);
+        result.push(ob.getPrefix() + genMessage(ob, messageName, option));
+        fieldName = `${messageName}`;
+      }
 
-      break
+      break;
     case TYPE.Object:
     case TYPE.String:
     case TYPE.Bool:
     case TYPE.Int:
     case TYPE.Float:
     default:
-
-      fieldName = `${ob.isPointer() ? "optional" : ''} ${getTargetTypeName(ob, option)}`
+      fieldName = `${ob.isPointer() ? "optional" : ""} ${getTargetTypeName(
+        ob,
+        option
+      )}`;
       if (option?.isShowExample) {
-        const example = ob.type === TYPE.String ? `\\"${ob.value}\\"` : ob.value
-        swaggerExample = ` [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {example: "${example}"}]`
+        const example =
+          ob.type === TYPE.String ? `\\"${ob.value}\\"` : ob.value;
+        swaggerExample = ` [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {example: "${example}"}]`;
       }
-
   }
 
-  (ob.key || ob.type !== TYPE.Struct) && result.push(`${prefix}${fieldName} ${toSnake(getMessageName(ob.key))} = ${index}${swaggerExample}; ${afterComment}`)
+  (ob.key || ob.type !== TYPE.Struct) &&
+    result.push(
+      `${prefix}${fieldName} ${toSnake(
+        getMessageName(ob.key)
+      )} = ${index}${swaggerExample}; ${afterComment}`
+    );
 
-  return result.join('\n')
-
-}
+  return result.join("\n");
+};
 
 const getMessageName = (key) => {
-  return key ? toCamel(key) : "AutoGenerated"
-}
+  return key ? toCamel(key) : "AutoGenerated";
+};
 
-const getTargetTypeName = (ob, {string2int64}) => {
+const getTargetTypeName = (ob, { string2int64 }) => {
   if (string2int64 && ob.type === TYPE.String && ob.mayInt64) {
-    return TYPEMap[TYPE.Int]
+    return TYPEMap[TYPE.Int];
   }
 
-  return TYPEMap[ob.type]
-}
+  return TYPEMap[ob.type];
+};
